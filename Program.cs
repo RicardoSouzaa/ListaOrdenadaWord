@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-using Word = Microsoft.Office.Interop.Word;
-
 namespace ListaOrdenadaWord
 {
     public class Program
@@ -73,7 +71,7 @@ namespace ListaOrdenadaWord
             }
             Console.WriteLine(sList);
 
-            ///// ############################################################################## FUNCIONAAAA lista com multilevel.
+            ///// ############################################################################## FUNCIONAAAA lista com multilevel substituindo uma tag.
 
             string search = "$list";
             while (range.Find.Execute(search))
@@ -88,25 +86,26 @@ namespace ListaOrdenadaWord
                 wordApp.Selection.Range.ListFormat.ApplyListTemplateWithLevel
                 (
                     listGallery.ListTemplates[1],
-                    ContinuePreviousList: false,
+                    ContinuePreviousList: true,
                     ApplyTo: WdListApplyTo.wdListApplyToWholeList,
                     DefaultListBehavior: WdDefaultListBehavior.wdWord10ListBehavior
                  );
 
                 // First level
-                wordApp.Selection.TypeText("Root Item A");  // Set text to key in
+                wordApp.Selection.TypeText("Root Item A".ToUpper());  // Set text to key in
                 wordApp.Selection.TypeParagraph();  // Simulate typing in MS Word
 
                 // Go to 2nd level
                 wordApp.Selection.Range.ListFormat.ListIndent();
                 wordApp.Selection.TypeText("Child Item A.1");
+                wordApp.Selection.
                 wordApp.Selection.TypeParagraph();
                 wordApp.Selection.TypeText("Child Item A.2");
                 wordApp.Selection.TypeParagraph();
 
                 // Back to 1st level
                 wordApp.Selection.Range.ListFormat.ListOutdent();
-                wordApp.Selection.TypeText("Root Item B");
+                wordApp.Selection.TypeText("Root Item B".ToUpper());
                 wordApp.Selection.TypeParagraph();
 
                 //Go to 2nd level
