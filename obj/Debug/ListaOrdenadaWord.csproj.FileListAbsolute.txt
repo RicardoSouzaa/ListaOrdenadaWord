@@ -1,0 +1,7 @@
+D:\Dev\Ricardo\ListaOrdenadaWord\bin\Debug\ListaOrdenadaWord.exe.config
+D:\Dev\Ricardo\ListaOrdenadaWord\bin\Debug\ListaOrdenadaWord.exe
+D:\Dev\Ricardo\ListaOrdenadaWord\bin\Debug\ListaOrdenadaWord.pdb
+D:\Dev\Ricardo\ListaOrdenadaWord\obj\Debug\ListaOrdenadaWord.csproj.AssemblyReference.cache
+D:\Dev\Ricardo\ListaOrdenadaWord\obj\Debug\ListaOrdenadaWord.csproj.CoreCompileInputs.cache
+D:\Dev\Ricardo\ListaOrdenadaWord\obj\Debug\ListaOrdenadaWord.exe
+D:\Dev\Ricardo\ListaOrdenadaWord\obj\Debug\ListaOrdenadaWord.pdb
