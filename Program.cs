@@ -11,7 +11,10 @@ namespace ListaOrdenadaWord
     public class Program
     {
         public Application wordApp = new Application();
+
         public Document aDoc = null;
+
+        List<string> data = new List<string>();
 
         object readOnly = false;
 
@@ -43,24 +46,8 @@ namespace ListaOrdenadaWord
 
         private void CreatWordDocument(object findText, object replaceText)
         {
-            //wordApp.Documents.Add(ref missing, ref missing,
-            //ref missing, ref missing);
-
-            //wordApp.Visible = true;
-
             wordApp.Visible = false;
 
-            //aDoc = wordApp.Documents.Open(
-            //    @"D:\Dev\dados\teste.docx",
-            //    ref missing, ref readOnly, ref missing, ref missing,
-            //    ref missing, ref missing, ref missing, ref missing,
-            //    ref missing, ref missing, false, ref missing,
-            //    ref missing, ref missing, ref missing
-            //);
-
-            //const int listNumber = 1; //The first list on the page is list 1, the second is list 2 etc etc
-
-            //aDoc = wordApp.Documents.Open(@"D:\Dev\dados\teste.docx");
             aDoc = wordApp.Documents.Open(
                 @"D:\Dev\dados\teste.docx",
                 ref missing, ref readOnly, ref missing, ref missing,
@@ -73,9 +60,6 @@ namespace ListaOrdenadaWord
 
             string sList = "";
             List oLst = aDoc.Lists[1];
-            //Range startList = oLst.Range;
-            //Range endList = startList.Duplicate;
-            //startList.End = endList.End;
 
             for (int i = 1; i <= oLst.ListParagraphs.Count; i++)
             {
@@ -83,26 +67,61 @@ namespace ListaOrdenadaWord
             }
             Console.WriteLine(sList);
 
-            //aqui define onde vai começar a lista.
-            range = aDoc.ListParagraphs[1].Next().Range;
-            range.InsertParagraphAfter();
-            //range.ListParagraphs[1].Range.InsertParagraphAfter();
+            ///// ##############################################################################
+            string testRows = "Test 1\n\tTest 2\tName\tAmount\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\n";
 
-            int startOfList = range.Start;
+            try
+            {
+                //adiciona um paragrafo depois do 1. e antes do 2.
+                var x = aDoc.ListParagraphs[1].Next();
+                x = aDoc.Paragraphs.Add(x.Range);
+                x.Range.Text = testRows;
+            }
+            catch (System.Runtime.InteropServices.COMException e)
+            {
+                Console.WriteLine("COMException: " + e.StackTrace.ToString());
+                Console.ReadKey();
+            }
 
-            range.Text = "teste\nteste 2\nteste 3";
-            range.InsertParagraphAfter();
-            range.InsertParagraphAfter();
-            int endOfList = range.End;
+            ///// ##############################################################################
 
-            Range listRange = aDoc.Range(startOfList, endOfList);
-            listRange.ListFormat.ApplyNumberDefault();
+            //int startOfList = range.Start;
+
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    var pText = aDoc.Paragraphs.Add();
+            //    pText.Format.SpaceAfter = 10f;
+
+            //    pText.Range.Text = $"Essa é a linha #{i}";
+            //    pText.Range.InsertParagraphAfter();
+
+            //    int endOfList = range.End;
+
+            //    Range listRange = aDoc.Range(startOfList, endOfList);
+            //    listRange.ListFormat.ApplyNumberDefault();
+            //}
+
+            ///// ##############################################################################
+            //range = aDoc.ListParagraphs[1].Range.Next();
+
+            //int startOfList = range.Start;
+
+            //range.Text = "teste\nteste 2\nteste 3\n\n";
+
+            //int endOfList = range.End;
+
+            //Range listRange = aDoc.Range(startOfList, endOfList);
+            //listRange.ListFormat.ApplyNumberDefault();
+
+            //range = aDoc.ListParagraphs[1].Next().Range;
+            //range = aDoc.Paragraphs.Last.Range;
 
             //range = aDoc.Paragraphs.Last.Range;
             //range.Text = "Bye for now!";
             //range.InsertParagraphAfter();
 
             //////#######################################################################
+
             //aDoc.Range().ListFormat.ApplyListTemplateWithLevel
             //(
             //    ListTemplate: aDoc.ListTemplates[listNumber],
