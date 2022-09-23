@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-using Word = Microsoft.Office.Interop.Word;
-
 namespace ListaOrdenadaWord
 {
     public class Program
@@ -14,7 +12,9 @@ namespace ListaOrdenadaWord
 
         public Document aDoc = null;
 
-        List<string> data = new List<string>();
+        Paragraph paragraph = null;
+
+        ListFormat listFormat = null;
 
         object readOnly = false;
 
@@ -23,6 +23,7 @@ namespace ListaOrdenadaWord
         static void Main(string[] args)
         {
             var mc = new Program();
+
             List<int> processesbeforegen = mc.getRunningProcesses();
 
             mc.CreatWordDocument("<TELEFONE>", "(43) 9991-9191");
@@ -46,6 +47,8 @@ namespace ListaOrdenadaWord
 
         private void CreatWordDocument(object findText, object replaceText)
         {
+            //ListGallery listGallery = wordApp.ListGalleries[WdListGalleryType.wdOutlineNumberGallery];
+
             wordApp.Visible = false;
 
             aDoc = wordApp.Documents.Open(
@@ -56,7 +59,8 @@ namespace ListaOrdenadaWord
                 ref missing, ref missing, ref missing
             );
 
-            Range range = aDoc.Content;
+            //Range range = aDoc.Content;
+            Range range = aDoc.Range();
 
             string sList = "";
             List oLst = aDoc.Lists[1];
@@ -67,105 +71,160 @@ namespace ListaOrdenadaWord
             }
             Console.WriteLine(sList);
 
-            ///// ##############################################################################
-            string testRows = "Test 1\n\tTest 2\tName\tAmount\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\n";
+            #region Lista multilevel com exemplo de ativar numero romano se precisar
 
-            try
+            ///// ############################################################################## FUNCIONAAAA lista com multilevel substituindo uma tag.
+
+            string search = "$list";
+            while (range.Find.Execute(search))
             {
-                //adiciona um paragrafo depois do 1. e antes do 2.
-                var x = aDoc.ListParagraphs[1].Next();
-                x = aDoc.Paragraphs.Add(x.Range);
-                x.Range.Text = testRows;
+                ListGallery listGallery = wordApp.ListGalleries[WdListGalleryType.wdNumberGallery];
+
+                #region Ativar template numero romano
+
+                //object n = 1;
+                //ListTemplate template = wordApp.ListGalleries[WdListGalleryType.wdNumberGallery].ListTemplates.get_Item(ref n);
+                //ListLevel level = template.ListLevels[1];
+                //level.NumberStyle = WdListNumberStyle.wdListNumberStyleUppercaseRoman;
+
+                #endregion Ativar template numero romano
+
+                // Select found location
+                range.Select();
+
+                // Apply multi level list
+                wordApp.Selection.Range.ListFormat.ApplyListTemplateWithLevel
+                (
+                    listGallery.ListTemplates[1],
+                    //template,                                                 ////ativar template....
+                    ContinuePreviousList: true,
+                    ApplyTo: WdListApplyTo.wdListApplyToWholeList,
+                    DefaultListBehavior: WdDefaultListBehavior.wdWord10ListBehavior
+
+                 );
+
+                // First level
+
+                wordApp.Selection.TypeText("Root Item A".ToUpper());  // Set text to key in
+                wordApp.Selection.TypeParagraph();  // Simulate typing in MS Word
+
+                // Go to 2nd level
+                wordApp.Selection.Range.ListFormat.ListIndent();
+                wordApp.Selection.TypeText("Child Item A.1");
+                wordApp.Selection.TypeParagraph();
+                wordApp.Selection.TypeText("Child Item A.2");
+                wordApp.Selection.TypeParagraph();
+
+                // Back to 1st level
+                wordApp.Selection.Range.ListFormat.ListOutdent();
+                wordApp.Selection.TypeText("Root Item B".ToUpper());
+                wordApp.Selection.TypeParagraph();
+
+                //Go to 2nd level
+                wordApp.Selection.Range.ListFormat.ListIndent();
+                wordApp.Selection.TypeText("Child Item B.1");
+                wordApp.Selection.TypeParagraph();
+                wordApp.Selection.TypeText("Child Item B.2");
+                wordApp.Selection.TypeParagraph();
+
+                wordApp.Selection.TypeBackspace();
             }
-            catch (System.Runtime.InteropServices.COMException e)
-            {
-                Console.WriteLine("COMException: " + e.StackTrace.ToString());
-                Console.ReadKey();
-            }
 
-            ///// ##############################################################################
+            #endregion Lista multilevel com exemplo de ativar numero romano se precisar
 
-            //int startOfList = range.Start;
+            #region Funcionando Lista numérica.
 
-            //for (int i = 0; i < 3; i++)
+            ///// ############################################################################## FUNCIONAAAA
+            //string testRows = "Test 1\n\tTest 2\tName\tAmount\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\n";
+
+            //try
             //{
-            //    var pText = aDoc.Paragraphs.Add();
-            //    pText.Format.SpaceAfter = 10f;
+            //    //adiciona um paragrafo depois do 1. e antes do 2.
+            //    paragraph = aDoc.ListParagraphs[1].Next();
+            //    paragraph = aDoc.Paragraphs.Add(paragraph.Range);
+            //    paragraph.Range.Text = testRows;
+            //    paragraph.Range.InsertParagraphAfter();
 
-            //    pText.Range.Text = $"Essa é a linha #{i}";
-            //    pText.Range.InsertParagraphAfter();
+            //    paragraph = aDoc.ListParagraphs[11].Next();
+            //    paragraph = aDoc.Paragraphs.Add(paragraph.Range);
+            //    paragraph.Range.Text = "Teste 11\n";
+            //    paragraph.Range.ListFormat.ApplyOutlineNumberDefault(WdDefaultListBehavior.wdWord10ListBehavior);
+            //    paragraph.Outdent();
+            //    paragraph.Range.InsertParagraphAfter();
 
-            //    int endOfList = range.End;
-
-            //    Range listRange = aDoc.Range(startOfList, endOfList);
-            //    listRange.ListFormat.ApplyNumberDefault();
+            //    paragraph = aDoc.Paragraphs.Add(paragraph.Range);
+            //    paragraph.Range.Text = "Teste 11.1";
+            //    paragraph.Indent();
+            //    paragraph.Range.InsertParagraphAfter();
+            //}
+            //catch (System.Runtime.InteropServices.COMException e)
+            //{
+            //    Console.WriteLine("COMException: " + e.StackTrace.ToString());
+            //    Console.ReadKey();
             //}
 
             ///// ##############################################################################
-            //range = aDoc.ListParagraphs[1].Range.Next();
 
-            //int startOfList = range.Start;
+            #endregion Funcionando Lista numérica.
 
-            //range.Text = "teste\nteste 2\nteste 3\n\n";
+            #region expemplos de configurações de templates
 
-            //int endOfList = range.End;
+            //////############################################################################# modelo para aplicar o template por método
 
-            //Range listRange = aDoc.Range(startOfList, endOfList);
-            //listRange.ListFormat.ApplyNumberDefault();
+            //paragraph = range.Paragraphs.Add();
+            //listFormat = paragraph.Range.ListFormat;
+            //paragraph.Range.Text = "Root Item A";
+            //this.ApplyListTemplate(listGallery, listFormat, 1);
+            //paragraph.Range.InsertParagraphAfter();
 
-            //range = aDoc.ListParagraphs[1].Next().Range;
-            //range = aDoc.Paragraphs.Last.Range;
+            //paragraph = paragraph.Range.Paragraphs.Add();
+            //listFormat = paragraph.Range.ListFormat;
+            //paragraph.Range.Text = "Child Item A.1";
+            //this.ApplyListTemplate(listGallery, listFormat, 2);
+            //paragraph.Range.InsertParagraphAfter();
+            //////#############################################################################
 
-            //range = aDoc.Paragraphs.Last.Range;
-            //range.Text = "Bye for now!";
-            //range.InsertParagraphAfter();
-
-            //////#######################################################################
-
-            //aDoc.Range().ListFormat.ApplyListTemplateWithLevel
-            //(
-            //    ListTemplate: aDoc.ListTemplates[listNumber],
-            //    ContinuePreviousList: true,
-            //    ApplyTo: WdListApplyTo.wdListApplyToSelection,
-            //    DefaultListBehavior: WdDefaultListBehavior.wdWord10ListBehavior
-            //);
+            /// modelos com lista em romana e configuração de templates.
+            //object missing = System.Reflection.Missing.Value;
+            //Microsoft.Office.Interop.Word.Application app = Globals.ThisAddIn.Application;
+            //Microsoft.Office.Interop.Word.Document doc1 = app.ActiveDocument;
+            //app.Visible = true;
+            //// whatever is selected will be turned into a numbered list.
+            //object n = 1;
+            //ListTemplate template =
+            //app.ListGalleries[WdListGalleryType.wdOutlineNumberGallery].ListTemplates.get_Item(ref n);
+            //Microsoft.Office.Interop.Word.ListLevel level = template.ListLevels[1];
+            //level.NumberFormat = "%1.";
+            //level.TrailingCharacter = WdTrailingCharacter.wdTrailingTab;
+            //level.NumberStyle = WdListNumberStyle.wdListNumberStyleArabic;
+            //level.NumberPosition = app.InchesToPoints(0.25f);
+            //level.Alignment = WdListLevelAlignment.wdListLevelAlignLeft;
+            //level.TextPosition = app.InchesToPoints(0.35f);
+            //level.TabPosition = (float)WdConstants.wdUndefined;
+            //level.ResetOnHigher = 0;
+            //level.StartAt = 1;
+            //level.LinkedStyle = "";
+            //template.Name = "";
+            //object bContinuePrevList = true;
+            //object applyTo = WdListApplyTo.wdListApplyToSelection;
+            //object defBehavior = WdDefaultListBehavior.wdWord10ListBehavior;
+            //app.Selection.Range.ListFormat.ApplyListTemplateWithLevel(
+            //template, ref bContinuePrevList,
+            //ref applyTo, ref defBehavior, ref missing);
 
             //////#############################################################################
-            //Document doc = wordApp.Documents.Add();
 
-            //Range range = doc.Content;
-            //range.Text = "Hello world!";
+            #endregion expemplos de configurações de templates
+        }
 
-            //range.InsertParagraphAfter();
-            //range = doc.Paragraphs.Last.Range;
-
-            //// start of list
-            //int startOfList = range.Start;
-
-            //// each \n character adds a new paragraph...
-            //range.Text = "Item 1\nItem 2\nItem 3";
-
-            //// ...or insert a new paragraph...
-            //range.InsertParagraphAfter();
-            //range = doc.Paragraphs.Last.Range;
-            //range.Text = "Item 4\nItem 5";
-
-            //// end of list
-            //int endOfList = range.End;
-
-            //// insert the next paragraph before applying the format, otherwise
-            //// the format will be copied to the suceeding paragraphs.
-            //range.InsertParagraphAfter();
-
-            //// apply list format
-            //Range listRange = doc.Range(startOfList, endOfList);
-            //listRange.ListFormat.ApplyBulletDefault();
-
-            //range = doc.Paragraphs.Last.Range;
-            //range.Text = "Bye for now!";
-            //range.InsertParagraphAfter();
-
-            //////#############################################################################
+        private void ApplyListTemplate(ListGallery listGallery, ListFormat listFormat, int level = 1)
+        {
+            listFormat.ApplyListTemplateWithLevel(
+                listGallery.ListTemplates[level],
+                ContinuePreviousList: true,
+                ApplyTo: WdListApplyTo.wdListApplyToSelection,
+                DefaultListBehavior: WdDefaultListBehavior.wdWord10ListBehavior,
+                ApplyLevel: level);
         }
 
         public List<int> getRunningProcesses()
