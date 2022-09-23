@@ -71,13 +71,23 @@ namespace ListaOrdenadaWord
             }
             Console.WriteLine(sList);
 
+            #region Lista multilevel com exemplo de ativar numero romano se precisar
+
             ///// ############################################################################## FUNCIONAAAA lista com multilevel substituindo uma tag.
 
             string search = "$list";
             while (range.Find.Execute(search))
             {
-                ListGallery listGallery =
-                    wordApp.ListGalleries[WdListGalleryType.wdNumberGallery];
+                ListGallery listGallery = wordApp.ListGalleries[WdListGalleryType.wdNumberGallery];
+
+                #region Ativar template numero romano
+
+                //object n = 1;
+                //ListTemplate template = wordApp.ListGalleries[WdListGalleryType.wdNumberGallery].ListTemplates.get_Item(ref n);
+                //ListLevel level = template.ListLevels[1];
+                //level.NumberStyle = WdListNumberStyle.wdListNumberStyleUppercaseRoman;
+
+                #endregion Ativar template numero romano
 
                 // Select found location
                 range.Select();
@@ -86,19 +96,21 @@ namespace ListaOrdenadaWord
                 wordApp.Selection.Range.ListFormat.ApplyListTemplateWithLevel
                 (
                     listGallery.ListTemplates[1],
+                    //template,                                                 ////ativar template....
                     ContinuePreviousList: true,
                     ApplyTo: WdListApplyTo.wdListApplyToWholeList,
                     DefaultListBehavior: WdDefaultListBehavior.wdWord10ListBehavior
+
                  );
 
                 // First level
+
                 wordApp.Selection.TypeText("Root Item A".ToUpper());  // Set text to key in
                 wordApp.Selection.TypeParagraph();  // Simulate typing in MS Word
 
                 // Go to 2nd level
                 wordApp.Selection.Range.ListFormat.ListIndent();
                 wordApp.Selection.TypeText("Child Item A.1");
-                wordApp.Selection.
                 wordApp.Selection.TypeParagraph();
                 wordApp.Selection.TypeText("Child Item A.2");
                 wordApp.Selection.TypeParagraph();
@@ -117,6 +129,11 @@ namespace ListaOrdenadaWord
 
                 wordApp.Selection.TypeBackspace();
             }
+
+            #endregion Lista multilevel com exemplo de ativar numero romano se precisar
+
+            #region Funcionando Lista numérica.
+
             ///// ############################################################################## FUNCIONAAAA
             //string testRows = "Test 1\n\tTest 2\tName\tAmount\nTest 3\nTest 4\nTest 5\nTest 6\nTest 7\nTest 8\nTest 9\nTest 10\n";
 
@@ -148,13 +165,9 @@ namespace ListaOrdenadaWord
 
             ///// ##############################################################################
 
-            //aDoc.Range().ListFormat.ApplyListTemplateWithLevel
-            //(
-            //    ListTemplate: aDoc.ListTemplates[listNumber],
-            //    ContinuePreviousList: true,
-            //    ApplyTo: WdListApplyTo.wdListApplyToSelection,
-            //    DefaultListBehavior: WdDefaultListBehavior.wdWord10ListBehavior
-            //);
+            #endregion Funcionando Lista numérica.
+
+            #region expemplos de configurações de templates
 
             //////############################################################################# modelo para aplicar o template por método
 
@@ -170,6 +183,38 @@ namespace ListaOrdenadaWord
             //this.ApplyListTemplate(listGallery, listFormat, 2);
             //paragraph.Range.InsertParagraphAfter();
             //////#############################################################################
+
+            /// modelos com lista em romana e configuração de templates.
+            //object missing = System.Reflection.Missing.Value;
+            //Microsoft.Office.Interop.Word.Application app = Globals.ThisAddIn.Application;
+            //Microsoft.Office.Interop.Word.Document doc1 = app.ActiveDocument;
+            //app.Visible = true;
+            //// whatever is selected will be turned into a numbered list.
+            //object n = 1;
+            //ListTemplate template =
+            //app.ListGalleries[WdListGalleryType.wdOutlineNumberGallery].ListTemplates.get_Item(ref n);
+            //Microsoft.Office.Interop.Word.ListLevel level = template.ListLevels[1];
+            //level.NumberFormat = "%1.";
+            //level.TrailingCharacter = WdTrailingCharacter.wdTrailingTab;
+            //level.NumberStyle = WdListNumberStyle.wdListNumberStyleArabic;
+            //level.NumberPosition = app.InchesToPoints(0.25f);
+            //level.Alignment = WdListLevelAlignment.wdListLevelAlignLeft;
+            //level.TextPosition = app.InchesToPoints(0.35f);
+            //level.TabPosition = (float)WdConstants.wdUndefined;
+            //level.ResetOnHigher = 0;
+            //level.StartAt = 1;
+            //level.LinkedStyle = "";
+            //template.Name = "";
+            //object bContinuePrevList = true;
+            //object applyTo = WdListApplyTo.wdListApplyToSelection;
+            //object defBehavior = WdDefaultListBehavior.wdWord10ListBehavior;
+            //app.Selection.Range.ListFormat.ApplyListTemplateWithLevel(
+            //template, ref bContinuePrevList,
+            //ref applyTo, ref defBehavior, ref missing);
+
+            //////#############################################################################
+
+            #endregion expemplos de configurações de templates
         }
 
         private void ApplyListTemplate(ListGallery listGallery, ListFormat listFormat, int level = 1)
