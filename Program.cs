@@ -10,11 +10,11 @@ namespace ListaOrdenadaWord
     {
         public Application wordApp = new Application();
 
-        public Document aDoc = null;
+        public Document aDoc = new Document();
 
-        Paragraph paragraph = null;
+        //Paragraph paragraph = null;
 
-        ListFormat listFormat = null;
+        //ListFormat listFormat = null;
 
         object readOnly = false;
 
@@ -47,8 +47,6 @@ namespace ListaOrdenadaWord
 
         private void CreatWordDocument(object findText, object replaceText)
         {
-            //ListGallery listGallery = wordApp.ListGalleries[WdListGalleryType.wdOutlineNumberGallery];
-
             wordApp.Visible = false;
 
             aDoc = wordApp.Documents.Open(
